@@ -52,6 +52,9 @@ public:
 	/// <returns>定数バッファ</returns>
 	const Microsoft::WRL::ComPtr<ID3D12Resource>& GetConstBuffer() const { return constBuffer_; }
 
+	// 行列を計算・転送する
+	void UpdateMatrix();
+
 private:
 	// 定数バッファ
 	Microsoft::WRL::ComPtr<ID3D12Resource> constBuffer_;
@@ -61,5 +64,17 @@ private:
 	WorldTransform(const WorldTransform&) = delete;
 	WorldTransform& operator=(const WorldTransform&) = delete;
 };
+
+inline void WorldTransform::UpdateMatrix() {
+	// スケール、回転、平行移動を合成して行列を計算する
+	matWorld_ = Matrix4x4::MakeAffineMatrix(scale_, rotation_, translation_);
+
+	if (parent_) {
+		matWorld_ *= parent_->matWorld_;
+	}
+
+	// 定数バッファに転送する
+	TransferMatrix();
+}
 
 static_assert(!std::is_copy_assignable_v<WorldTransform>);

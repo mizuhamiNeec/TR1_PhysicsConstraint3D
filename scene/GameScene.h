@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Audio.h"
+#include "Circle.h"
 #include "DirectXCommon.h"
 #include "Input.h"
 #include "Model.h"
@@ -47,4 +48,23 @@ private: // メンバ変数
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
+
+	ViewProjection viewProjection_;
+
+	std::unique_ptr<Model> sphere_;
+
+	std::shared_ptr<Camera> camera;
+
+	// ワールドにあるすべてのオブジェクトを格納します
+	std::vector<std::shared_ptr<Object>> objects;
+	std::vector<std::shared_ptr<Circle>> circles;
+
+	// 選択されたオブジェクトのポインタがここに格納される
+	std::shared_ptr<Object> selectedObject = nullptr;
+
+	bool lookAtObject = true;
+
+	Vec3 camVel_;
+
+	float cameraMoveSpeed_ = 1.0f;
 };
