@@ -1,20 +1,20 @@
-#include "Circle.h"
+#include "Sphere.h"
 
-#include "Circle.h"
+#include "Sphere.h"
 
 #include "PrimitiveDrawer.h"
 
-Circle::~Circle() {
+Sphere::~Sphere() {
 }
 
-bool Circle::IsCollide(const Circle& other) const {
+bool Sphere::IsCollide(const Sphere& other) const {
 	float distance = this->transform_.translation_.ConvertToVec3().Distance(other.transform_.translation_.ConvertToVec3());
 
 	float radiusSum = this->circleRadius_ * this->transform_.scale_.x + other.circleRadius_ * other.transform_.scale_.x;
 	return distance < radiusSum;
 }
 
-Circle::Circle(const std::string& name, const std::string& tag, const bool active, const float radius) : model_(nullptr) {
+Sphere::Sphere(const std::string& name, const std::string& tag, const bool active, const float radius) : model_(nullptr) {
 	transform_.Initialize();
 
 	name_ = name;
@@ -23,14 +23,14 @@ Circle::Circle(const std::string& name, const std::string& tag, const bool activ
 	circleRadius_ = radius;
 }
 
-void Circle::Initialize(const std::string& name) {
+void Sphere::Initialize(const std::string& name) {
 	Object::Initialize(name);
 	if (parent_) {
 		maxDistanceToParent_ = transform_.translation_.ConvertToVec3().Distance(parent_->GetTransform().position);
 	}
 }
 
-void Circle::ResolveCollision(Circle& other) {
+void Sphere::ResolveCollision(Sphere& other) {
 	Vec3 normal = (other.transform_.translation_.ConvertToVec3() - this->transform_.translation_.ConvertToVec3()).Normalized();
 	float relativeVelocity = (other.rb_.GetVelocity() - this->rb_.GetVelocity()).DotProduct(normal);
 
@@ -60,7 +60,7 @@ void Circle::ResolveCollision(Circle& other) {
 	other.rb_.SetVelocity(other.rb_.GetVelocity() + impulse / other.rb_.GetMass());
 }
 
-void Circle::Update() {
+void Sphere::Update() {
 	// スタティックだったら
 	if (isStatic) {
 		// 速度はゼロ
@@ -73,7 +73,7 @@ void Circle::Update() {
 
 		// 子の当たり判定
 		for (auto& child : children_) {
-			if (auto circleChild = dynamic_cast<Circle*>(child.get())) {
+			if (auto circleChild = dynamic_cast<Sphere*>(child.get())) {
 				// 衝突していたら
 				if (IsCollide(*circleChild)) {
 					// 外に出す
@@ -83,7 +83,7 @@ void Circle::Update() {
 				// 他の子同士も判定を行う
 				for (auto& otherChild : children_) {
 					if (circleChild != otherChild.get()) {
-						if (auto otherCircleChild = dynamic_cast<Circle*>(otherChild.get())) {
+						if (auto otherCircleChild = dynamic_cast<Sphere*>(otherChild.get())) {
 							if (circleChild->IsCollide(*otherCircleChild)) {
 								circleChild->ResolveCollision(*otherCircleChild);
 							}
@@ -102,7 +102,7 @@ void Circle::Update() {
 	}
 }
 
-void Circle::Draw(const ViewProjection& viewProjection) {
+void Sphere::Draw(const ViewProjection& viewProjection) {
 
 	model_->Draw(transform_, viewProjection);
 	for (auto& child : children_) {
@@ -110,7 +110,7 @@ void Circle::Draw(const ViewProjection& viewProjection) {
 	}
 }
 
-void Circle::DebugDraw() const {
+void Sphere::DebugDraw() const {
 	if (bDrawDebug) {
 		PrimitiveDrawer::GetInstance()->DrawLine3d(
 			transform_.translation_,
@@ -128,7 +128,7 @@ void Circle::DebugDraw() const {
 				{1.0f,1.0f,1.0f,1.0f}
 			);
 
-			if (auto circle = dynamic_cast<Circle*>(child.get())) {
+			if (auto circle = dynamic_cast<Sphere*>(child.get())) {
 				{
 					circle->DebugDraw();
 				}
@@ -138,10 +138,10 @@ void Circle::DebugDraw() const {
 
 }
 
-void Circle::Details() {
+void Sphere::Details() {
 	Object::Details();
 
-	if (ImGui::CollapsingHeader("Circle", ImGuiTreeNodeFlags_DefaultOpen)) {
+	if (ImGui::CollapsingHeader("Sphere", ImGuiTreeNodeFlags_DefaultOpen)) {
 		ImGui::DragFloat("Radius", &circleRadius_, 0.5f);
 	}
 
@@ -173,19 +173,19 @@ void Circle::Details() {
 	}
 }
 
-Rigidbody Circle::GetRigidbody() const {
+Rigidbody Sphere::GetRigidbody() const {
 	return rb_;
 }
 
-bool Circle::GetStatic() const {
+bool Sphere::GetStatic() const {
 	return isStatic;
 }
 
-void Circle::ApplyDistanceConstraint() {
+void Sphere::ApplyDistanceConstraint() {
 	// 親がある場合
 	if (parent_) {
 		// 子がCircleだった場合
-		if (auto p = dynamic_cast<Circle*>(parent_.get())) {
+		if (auto p = dynamic_cast<Sphere*>(parent_.get())) {
 			Vec3 direction;
 
 			for (int i = 0; i < 3; ++i) {
@@ -225,6 +225,6 @@ void Circle::ApplyDistanceConstraint() {
 }
 
 
-void Circle::SetModel(Model* model) {
+void Sphere::SetModel(Model* model) {
 	model_ = model;
 }

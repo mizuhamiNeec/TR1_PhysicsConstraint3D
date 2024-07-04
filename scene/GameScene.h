@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Audio.h"
-#include "Circle.h"
+#include "Sphere.h"
 #include "DirectXCommon.h"
 #include "Input.h"
 #include "Model.h"
@@ -57,7 +57,7 @@ private: // メンバ変数
 
 	// ワールドにあるすべてのオブジェクトを格納します
 	std::vector<std::shared_ptr<Object>> objects;
-	std::vector<std::shared_ptr<Circle>> circles;
+	std::vector<std::shared_ptr<Sphere>> circles;
 
 	// 選択されたオブジェクトのポインタがここに格納される
 	std::shared_ptr<Object> selectedObject = nullptr;

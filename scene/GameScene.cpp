@@ -8,6 +8,7 @@
 
 void DrawGrid();
 void RenderOutliner(const std::shared_ptr<Object>& object, std::shared_ptr<Object>& selectedObject);
+Vector3 TransformNormal(Vector3 v, const Mat4& m);
 
 GameScene::GameScene() {}
 
@@ -32,7 +33,7 @@ void GameScene::Initialize() {
 	// 
 	//-----------------------------------------------------------------------------
 	constexpr int numChildren = 5;
-	auto circleRoot = std::make_shared<Circle>("CircleRoot");
+	auto circleRoot = std::make_shared<Sphere>("SphereRoot");
 	circleRoot->SetTransform(
 		Vec3::zero,
 		Vec3::zero,
@@ -44,7 +45,7 @@ void GameScene::Initialize() {
 
 	auto parent = circleRoot;
 	for (int i = 1; i <= numChildren; ++i) {
-		auto child = std::make_shared<Circle>("child" + std::to_string(i));
+		auto child = std::make_shared<Sphere>("child" + std::to_string(i));
 		child->SetTransform(
 			{child->GetRadius() * 2.0f * i, 0.0f, 0.0f},
 			Vec3::zero,
@@ -57,14 +58,15 @@ void GameScene::Initialize() {
 		parent = child;
 	}
 
-	//auto child2 = std::make_shared<Circle>("CircleChild2");
+	// 別の子
+	//auto child2 = std::make_shared<Sphere>("CircleChild2");
 	//child2->SetTransform({-5.0f,0.0f,0.0f}, Vec3::zero, Vec3::one);
 	//circleRoot->GetChildren()[0]->AddChild(child2);
 	//child2->Initialize(child2->GetName());
 	//child2->SetModel(sphere_.get());
 	//circles.push_back(child2);
 
-	auto otherCircle = std::make_shared<Circle>("OtherCircle");
+	auto otherCircle = std::make_shared<Sphere>("OtherSphere");
 	otherCircle->SetModel(sphere_.get());
 	otherCircle->SetTransform(
 		{-4.0f,0.0f,0.0f},
@@ -81,8 +83,6 @@ void GameScene::Initialize() {
 
 	objects.push_back(camera);
 }
-
-Vector3 TransformNormal(Vector3 v, const Mat4& m);
 
 void GameScene::Update() {
 #pragma region カメラ操作
@@ -193,7 +193,7 @@ void GameScene::Update() {
 	}
 #pragma endregion
 
-	// 円の更新
+	// ソルバーの更新
 	for (size_t i = 0; i < circles.size(); ++i) {
 		for (size_t j = i + 1; j < circles.size(); ++j) {
 			if (circles[i]->IsCollide(*circles[j])) {
@@ -208,10 +208,9 @@ void GameScene::Update() {
 	}
 
 	if (lookAtObject) {
-
 		if (selectedObject && selectedObject != camera) {
 			Vector3 newPos;
-			auto circle = dynamic_cast<Circle*>(selectedObject.get());
+			auto circle = dynamic_cast<Sphere*>(selectedObject.get());
 
 			// 追従対象からカメラまでのオフセット
 			Vector3 offset = {0.0f, 0.0f , circle->GetRadius() - 30.0f};
@@ -316,7 +315,7 @@ void GameScene::Draw() {
 	}
 
 	for (const auto& o : objects) {
-		if (auto circle = dynamic_cast<Circle*>(o.get())) {
+		if (auto circle = dynamic_cast<Sphere*>(o.get())) {
 			circle->DebugDraw();
 		}
 	}

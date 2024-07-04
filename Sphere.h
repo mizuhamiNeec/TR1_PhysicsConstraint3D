@@ -7,22 +7,22 @@
 #include "Object.h"
 #include "Rigidbody.h"
 
-class Circle final : public Object {
+class Sphere final : public Object {
 public:
-	~Circle() override;
+	~Sphere() override;
 
 	float GetRadius() const {
 		return circleRadius_;
 	}
 
-	bool IsCollide(const Circle& other) const;
+	bool IsCollide(const Sphere& other) const;
 
-	Circle(const std::string& name = "Circle", const std::string& tag = "", bool active = true, float radius = 1.0f);
+	Sphere(const std::string& name = "Sphere", const std::string& tag = "", bool active = true, float radius = 1.0f);
 	void Initialize(const std::string& name) override;
 
 	void SetModel(Model* model);
 
-	void ResolveCollision(Circle& other);
+	void ResolveCollision(Sphere& other);
 
 	void Update() override;
 

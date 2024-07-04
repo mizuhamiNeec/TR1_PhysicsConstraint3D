@@ -111,7 +111,7 @@
     <ClCompile Include="base\DirectXCommon.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Circle.cpp" />
+    <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="CollisionShapes.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="main.cpp" />
@@ -149,7 +149,7 @@
     <ClInclude Include="base\TextureManager.h" />
     <ClInclude Include="base\WinApp.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Circle.h" />
+    <ClInclude Include="Sphere.h" />
     <ClInclude Include="CollisionShapes.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="input\Input.h" />
